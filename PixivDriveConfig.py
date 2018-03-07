@@ -20,12 +20,18 @@ class PixivDriveConfig:
 
 
 def main():
+    # インスタンス生成
     config = PixivDriveConfig()
+    # パスとエンコーディングを指定してJsonの読み込み
     config.load_json("PixivDriveConfig.json", "utf-8_sig")
+
+    # タグ取得
     tags = config.get_tags()
     print(tags)
+    # 画像数を取得
     num_of_image = config.get_num_of_image()
     print(num_of_image)
+    # 更新間隔を取得
     interval = config.get_interval()
     print(interval)
 
