@@ -3,20 +3,30 @@ import json
 
 class PixivDriveConfig:
     def __init__(self):
-        self.json_data = None
+        self.tags = None
+        self.num_of_image = None
+        self.interval = None
 
     def load_json(self, path, encoding):
+        # ファイルを開く
         f = open(path, 'r', encoding=encoding)
-        self.json_data = json.load(f)
+        json_data = json.load(f)
+        self.__load_value(json_data)
+
+    def __load_value(self, json_data):
+        # 初期化
+        self.tags = json_data["want_image"]["tag"]
+        self.num_of_image = json_data["want_image"]["num_of_image"]
+        self.interval = json_data["interval"]
 
     def get_tags(self):
-        return self.json_data["want_image"]["tag"]
+        return self.tags
 
     def get_num_of_image(self):
-        return self.json_data["want_image"]["num_of_image"]
+        return self.num_of_image
 
     def get_interval(self):
-        return self.json_data["interval"]
+        return self.interval
 
 
 def main():
