@@ -6,7 +6,7 @@ from PixivDriveConfig import PixivDriveConfig
 class LoadPixivDriveConfig(PixivDriveConfig):
     """
     PixivDriveのPixivDriveConfig.jsonをパースし、値を取得する為のクラスです。
-    初めに#load_json()でJsonファイルを読み込みます。後は自由に#get_tagsなどでValueを受け取ります。
+    初めに#load_json()でJsonファイルを読み込みます。後は自由に#tagsなどでValueを受け取ります。
     """
 
     def __init__(self):
