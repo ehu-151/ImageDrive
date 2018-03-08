@@ -35,27 +35,6 @@ class LoadPixivDriveConfig(PixivDriveConfig):
         self.num_of_image = int(json_data["want_image"]["num_of_image"])
         self.interval = int(json_data["interval"])
 
-    def get_tags(self):
-        """
-        欲しい画像のタグ名を返します。
-        :return: タグ名
-        """
-        return self.tags
-
-    def get_num_of_image(self):
-        """
-        欲しい画像の数を返します。
-        :return: 枚数
-        """
-        return self.num_of_image
-
-    def get_interval(self):
-        """
-        PixivDriveの更新間隔を返します。
-        :return: 秒
-        """
-        return self.interval
-
 
 def main():
     # インスタンス生成
@@ -64,13 +43,13 @@ def main():
     config.load_json("PixivDriveConfig.json", "utf-8_sig")
 
     # タグ取得
-    tags = config.get_tags()
+    tags = config.tags
     print(tags)
     # 画像数を取得
-    num_of_image = config.get_num_of_image()
+    num_of_image = config.num_of_image
     print(num_of_image)
     # 更新間隔を取得
-    interval = config.get_interval()
+    interval = config.interval
     print(interval)
 
 
