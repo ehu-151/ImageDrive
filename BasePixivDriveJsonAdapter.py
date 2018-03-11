@@ -2,6 +2,9 @@ import json
 
 
 class BasePixivDriveJsonAdapter:
+    """
+    Jsonパーサの基礎クラスです。load_jsonを保持します。
+    """
     def __init__(self):
         self.json_data = None
 
@@ -17,4 +20,8 @@ class BasePixivDriveJsonAdapter:
         self.json_data = json.load(f)
 
     def __load_value(self, json_data):
+        """valueを読み込みフィールドに格納します。
+        :param json_data: jsonクラスでパースした文字列
+        :return: なし
+        """
         pass

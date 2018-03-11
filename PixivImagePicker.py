@@ -1,25 +1,29 @@
-from PixivDriveSettingJsonAdapter import PixivDriveSettingJsonAdapter
 from pixivpy3 import *
-import json
+
+from PixivAccountJsonAdapter import PixivAccountJsonAdapter
 
 
 class PixivImagePicker:
     """
-    Pixivの画像をバイナリファイルで取得するクラス。
-
-    パラメータ
-    tag
-    num_of_image
+    Pixivの画像をバイナリファイルで取得するクラス。Pixivアカウントに#loginでログインしてください。
     """
 
-    def __init__(self, pixiv_account, pixiv_drive_config):
-        self.tag = pixiv_drive_config.tag
-        self.num_of_image = pixiv_drive_config.num_of_image
-        self.__pixi
+    def __init__(self):
+        self.aapi = AppPixivAPI()
+        pass
 
-    def login(self, id, password):
-        aapi = AppPixivAPI()
-        aapi.login(id, password)
+    def login(self, pixiv_id, password):
+        """
+        Pixivアカウントにログインします。
+        :param pixiv_id: emailアドレス
+        :param password: パスワード
+        :return: なし
+        """
+        try:
+            self.aapi.login(pixiv_id, password)
+            print("ログイン成功")
+        except PixivError:
+            print("ログイン失敗")
 
     def pick(self):
         pass
@@ -27,10 +31,9 @@ class PixivImagePicker:
 
 def main():
     picker = PixivImagePicker()
-    f = open(r'../../.PyCharmCE2017.2/config/scratches/client.json', 'r', encoding="utf-8_sig")
-    json_data = json.load(f)
-
-    picker.login(json_data[""])
+    account = PixivAccountJsonAdapter()
+    account.load_json(r"..\..\.PyCharmCE2017.2\config\scratches\client.json", "utf-8_sig")
+    picker.login(account.pixiv_id, account.password)
 
 
 if __name__ == '__main__':
