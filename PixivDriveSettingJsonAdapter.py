@@ -1,9 +1,7 @@
-import json
-
-from PixivDriveConfig import PixivDriveConfig
+from BasePixivDriveJsonAdapter import BasePixivDriveJsonAdapter
 
 
-class LoadPixivDriveConfig(PixivDriveConfig):
+class PixivDriveSettingJsonAdapter(BasePixivDriveJsonAdapter):
     """
     PixivDriveのPixivDriveConfig.jsonをパースし、値を取得する為のクラスです。
     初めに#load_json()でJsonファイルを読み込みます。後は自由に#tagsなどでValueを受け取ります。
@@ -11,18 +9,13 @@ class LoadPixivDriveConfig(PixivDriveConfig):
 
     def __init__(self):
         super().__init__()
+        self.tags = None
+        self.num_of_image = None
+        self.interval = None
 
     def load_json(self, path, encoding):
-        """
-        Jsonファイルを読み込みます。
-        :param path: Jsonファイルのパス
-        :param encoding: Windowsの場合はutf-8_sig
-        :return: なし
-        """
-        # ファイルを開く
-        f = open(path, 'r', encoding=encoding)
-        json_data = json.load(f)
-        self.__load_value(json_data)
+        super(PixivDriveSettingJsonAdapter, self).load_json(path, encoding)
+        self.__load_value(self.json_data)
 
     def __load_value(self, json_data):
         """
@@ -38,9 +31,9 @@ class LoadPixivDriveConfig(PixivDriveConfig):
 
 def main():
     # インスタンス生成
-    config = LoadPixivDriveConfig()
+    config = PixivDriveSettingJsonAdapter()
     # パスとエンコーディングを指定してJsonの読み込み
-    config.load_json("PixivDriveConfig.json", "utf-8_sig")
+    config.load_json("PixivDriveSetting.json", "utf-8_sig")
 
     # タグ取得
     tags = config.tags
