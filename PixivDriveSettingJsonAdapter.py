@@ -12,9 +12,11 @@ class PixivDriveSettingJsonAdapter(BasePixivDriveJsonAdapter):
         self.tags = None
         self.num_of_image = None
         self.interval = None
+        self.__path = 'PixivDriveSetting.json'
+        self.__load_json()
 
-    def load_json(self, path, encoding):
-        super(PixivDriveSettingJsonAdapter, self).load_json(path, encoding)
+    def __load_json(self):
+        super(PixivDriveSettingJsonAdapter, self).load_json(self.__path, 'utf-8_sig')
         self.__load_value(self.json_data)
 
     def __load_value(self, json_data):
@@ -32,8 +34,6 @@ class PixivDriveSettingJsonAdapter(BasePixivDriveJsonAdapter):
 def main():
     # インスタンス生成
     config = PixivDriveSettingJsonAdapter()
-    # パスとエンコーディングを指定してJsonの読み込み
-    config.load_json("PixivDriveSetting.json", "utf-8_sig")
 
     # タグ取得
     tags = config.tags
