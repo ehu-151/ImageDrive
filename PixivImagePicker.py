@@ -1,8 +1,11 @@
 from pixivpy3 import *
 from PixivDriveSettingJsonAdapter import PixivDriveSettingJsonAdapter
 from PixivAccountJsonAdapter import PixivAccountJsonAdapter
-
+import urllib.request
+import io
+import requests
 import json
+from MyAppPixivAPI import MyAppPixivAPI
 
 
 class PixivImagePicker:
@@ -14,7 +17,7 @@ class PixivImagePicker:
     """
 
     def __init__(self):
-        self.aapi = AppPixivAPI()
+        self.aapi = MyAppPixivAPI()
         # アカウント情報(id, password)を格納
         self.__init_setting()
         pass
@@ -44,29 +47,31 @@ class PixivImagePicker:
         except PixivError:
             print("ログイン失敗")
 
-    def save_images_by_tags(self, tags,times):
+    def get_image_url_by_tags(self, tags, times):
         """
         tagを指定して画像を返します。
 
         :param tags: タグ
-        :return: image: 画像
+        :param times: 指定タグの画像の取得数
+        :return: なし
         """
         self.__login()
         json_result = self.aapi.search_illust(word=tags, req_auth=True)
         # 枚数分だけダウンロード
-        for illust in json_result.illusts[:times]:
-            self.__download(illust.image_urls['large'])
+        return json_result.illusts[:times]
+
+    def download_binary(self,image_url):
+        return self.aapi.download_binary(image_url)
 
     def __download(self, image_url):
-        self.aapi.download(image_url, path=r'C:\Users\kaikoro\.PyCharmCE2017.2\config\scratches\image')
-        print("ダウンロードしました")
+        return self.aapi.download_binary(image_url)
 
 
 def main():
     # インスタンス生成
     picker = PixivImagePicker()
     # タグで画像を取得
-    picker.save_images_by_tags("背景",3)
+    picker.get_image_url_by_tags("背景", 1)
 
 
 if __name__ == '__main__':
