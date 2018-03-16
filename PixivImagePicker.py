@@ -1,51 +1,15 @@
-from pixivpy3 import *
-from PixivDriveSettingJsonAdapter import PixivDriveSettingJsonAdapter
+from pixivpy3 import AppPixivAPI
 from PixivAccountJsonAdapter import PixivAccountJsonAdapter
-import urllib.request
-import io
-import requests
-import json
-from MyAppPixivAPI import MyAppPixivAPI
+from PixivDriveSettingJsonAdapter import PixivDriveSettingJsonAdapter
 
 
-class PixivImagePicker:
+class PixivImagePicker(AppPixivAPI):
     """
-    Pixivの画像をバイナリファイルで取得するクラス。
+    Pixivの画像をバイナリファイルで取得するクラス。AppPixivAPIを継承しています。
 
     Hint:
     #save_images_by_tag: tagを指定して画像を返します。
     """
-
-    def __init__(self):
-        self.aapi = MyAppPixivAPI()
-        # アカウント情報(id, password)を格納
-        self.__init_setting()
-        pass
-
-    def __init_setting(self):
-        """
-        PixivAccountJsonAdapter.pyからアカウントのidとパスワードの読み込み。
-
-        :return: なし
-        """
-        account = PixivAccountJsonAdapter()
-        account.load_json(r"..\..\.PyCharmCE2017.2\config\scratches\client.json", "utf-8_sig")
-        self.pixiv_id = account.pixiv_id
-        self.password = account.password
-
-    def __login(self):
-        """
-        Pixivアカウントにログインします。
-
-        :param pixiv_id: emailアドレス
-        :param password: パスワード
-        :return: なし
-        """
-        try:
-            self.aapi.login(self.pixiv_id, self.password)
-            print("ログイン成功")
-        except PixivError:
-            print("ログイン失敗")
 
     def get_image_url_by_tags(self, tags, times):
         """
@@ -56,22 +20,30 @@ class PixivImagePicker:
         :return: なし
         """
         self.__login()
-        json_result = self.aapi.search_illust(word=tags, req_auth=True)
+        json_result = self.search_illust(word=tags, req_auth=True)
         # 枚数分だけダウンロード
         return json_result.illusts[:times]
 
-    def download_binary(self,image_url):
-        return self.aapi.download_binary(image_url)
-
-    def __download(self, image_url):
-        return self.aapi.download_binary(image_url)
+    def download_binary(self, url, referer='https://app-api.pixiv.net/'):
+        # Write stream to file
+        response = self.requests_call('GET', url, headers={'Referer': referer}, stream=True)
+        return response.content
 
 
 def main():
+    account = PixivAccountJsonAdapter()
+    account.load_json(r"..\..\.PyCharmCE2017.2\config\scratches\client.json", "utf-8_sig")
+    username = account.pixiv_id
+    password = account.password
+
+    pixiv_setting = PixivDriveSettingJsonAdapter()
+
     # インスタンス生成
     picker = PixivImagePicker()
+    picker.login(username, password)
+    print(pixiv_setting.tags)
     # タグで画像を取得
-    picker.get_image_url_by_tags("背景", 1)
+    # picker.get_image_url_by_tags(pixiv_sttting.tags[0], 1)
 
 
 if __name__ == '__main__':
