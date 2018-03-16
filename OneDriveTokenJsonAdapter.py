@@ -1,11 +1,12 @@
 from BasePixivDriveJsonAdapter import BasePixivDriveJsonAdapter
 
+
 class OneDriveTokenJsonAdapter(BasePixivDriveJsonAdapter):
     def __init__(self):
         super().__init__()
         self.access_token = None
         self.refresh_token = None
-        self.time_stamp=None
+        self.time_stamp = None
         self.__path = r"..\onedrive_token.json"
         self.__load_json()
 
@@ -17,11 +18,11 @@ class OneDriveTokenJsonAdapter(BasePixivDriveJsonAdapter):
         # 初期化
         self.access_token = json_data["access_token"]
         self.refresh_token = json_data["refresh_token"]
-        self.time_stamp=json_data["time_stamp"]
+        self.time_stamp = json_data["time_stamp"]
 
 
 def main():
-    config=OneDriveTokenJsonAdapter()
+    config = OneDriveTokenJsonAdapter()
     print(config.access_token)
     print(config.refresh_token)
     print(config.time_stamp)
