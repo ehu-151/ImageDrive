@@ -1,11 +1,14 @@
 from OneDriveTokenJsonAdapter import OneDriveTokenJsonAdapter
-from datetime import datetime
-
+import datetime
+import requests
+import json
 
 class RequestAccessToken:
     def __init__(self):
         self.__access_token = None
         self.__refresh_token = None
+        self.__redirect_url = "https://localhost:3000/returned"
+        self.__scope = "Files.ReadWrite.All offline_access"
 
     def get_access_token(self):
         """
@@ -13,19 +16,50 @@ class RequestAccessToken:
 
         :return: access_token
         """
+
+        # Jsonデータから直近の更新時間をチェック、何も記入されていない場合はエラー
         adapter = OneDriveTokenJsonAdapter()
-        now_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
-        # アクセストークンを更新すべきかのチェック
-        if adapter.time_stamp == "":
-            pass
-        elif adapter.time_stamp > now_time - 3600:
-            return adapter.access_token
+        form = "%Y-%m-%d %H:%M"
+        if adapter.time_stamp != "":
+            least_log_time = datetime.datetime.strptime(adapter.time_stamp, form)
         else:
+            raise ValueError(
+                "timestamp is none value. you must replace Value to '2000-01-01 01:00'  in 'onedrive_token.json'")
+        # 現在の時刻
+        now_time = datetime.datetime.now()
+
+        # アクセストークンを更新すべきかのチェック
+        if now_time - least_log_time >= datetime.timedelta(seconds=60 * 50):
+            # アクセストークンが50分以上経過した時と更新ログが設定されてない場合は、更新する
+            print("更新する")
             pass
+        else:
+            # 更新無しで'onedrive_token.json'から取得
+            return adapter.access_token
+
+    def refresh_access_token(self):
+        config = OneDriveTokenJsonAdapter()
+        # URLエンドポイント
+        endpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+        # bodyのパラメータ
+        payload = {"grant_type": "refresh_token", "refresh_token": config.refresh_token, "client_id": config.client_id,
+                   "client_secret": config.client_secret, "scope": self.__scope, "redirect_uri": self.__redirect_url}
+        header = {"Content-Type": "application/x-www-form-urlencoded"}
+        res = requests.post(url=endpoint, params=payload,headers=header)
+        print(res.status_code)
+        print(res.json())
+        print("hh")
+        # json.dump(te,indent=4)
+        # self.__replace_token()
+        # return list(r.json()[0].keys())
+
+    def __replace_token(self):
+        pass
 
 
 def main():
-    pass
+    request = RequestAccessToken()
+    request.refresh_access_token()
 
 
 if __name__ == '__main__':
