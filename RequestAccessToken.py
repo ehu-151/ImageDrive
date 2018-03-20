@@ -40,6 +40,10 @@ class RequestAccessToken:
             return adapter.access_token
 
     def refresh_access_token(self):
+        """
+        リフレッシュトークンからアクセストークンを生成して返します。
+        :return: access_token
+        """
         config = OneDriveTokenJsonAdapter()
         # URLエンドポイント
         endpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
@@ -47,9 +51,8 @@ class RequestAccessToken:
         payload = {"grant_type": "refresh_token", "refresh_token": config.refresh_token, "client_id": config.client_id,
                    "client_secret": config.client_secret, "scope": self.__scope, "redirect_uri": self.__redirect_url}
         header = {"Content-Type": "application/x-www-form-urlencoded"}
-        res = requests.post(url=endpoint, data=payload, headers=header)
-        print(res.status_code)
-        print(res.json())
+        json_data = requests.post(url=endpoint, data=payload, headers=header).json()
+        return json_data["access_token"]
 
     def __replace_token(self):
         pass
@@ -57,7 +60,8 @@ class RequestAccessToken:
 
 def main():
     request = RequestAccessToken()
-    request.refresh_access_token()
+    access_token = request.refresh_access_token()
+    print(access_token)
 
 
 if __name__ == '__main__':
