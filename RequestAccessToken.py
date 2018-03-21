@@ -1,8 +1,7 @@
-from OneDriveTokenJsonAdapter import OneDriveTokenJsonAdapter
 import datetime
 import requests
-import json
-import urllib.request
+
+from OneDriveTokenJsonAdapter import OneDriveTokenJsonAdapter
 
 
 class RequestAccessToken:
@@ -33,13 +32,12 @@ class RequestAccessToken:
         # アクセストークンを更新すべきかのチェック
         if now_time - least_log_time >= datetime.timedelta(seconds=60 * 50):
             # アクセストークンが50分以上経過した時と更新ログが設定されてない場合は、更新する
-            print("更新する")
-            pass
+            self.__refresh_access_token()
         else:
             # 更新無しで'onedrive_token.json'から取得
             return adapter.access_token
 
-    def refresh_access_token(self):
+    def __refresh_access_token(self):
         """
         リフレッシュトークンからアクセストークンを生成して返します。
         :return: access_token
@@ -51,16 +49,20 @@ class RequestAccessToken:
         payload = {"grant_type": "refresh_token", "refresh_token": config.refresh_token, "client_id": config.client_id,
                    "client_secret": config.client_secret, "scope": self.__scope, "redirect_uri": self.__redirect_url}
         header = {"Content-Type": "application/x-www-form-urlencoded"}
-        json_data = requests.post(url=endpoint, data=payload, headers=header).json()
-        return json_data["access_token"]
-
-    def __replace_token(self):
-        pass
+        res = requests.post(url=endpoint, data=payload, headers=header)
+        if res.status_code == 200:
+            # 'onedrive_token.json'に'更新時刻とアクセストークンを書き込む
+            form = "%Y-%m-%d %H:%M"
+            now_time = datetime.datetime.now().strftime(form)
+            json_data = res.json()
+            access_token = json_data["access_token"]
+            config.save_value(access_token=access_token, timestamp=str(now_time))
+            return json_data["access_token"]
 
 
 def main():
     request = RequestAccessToken()
-    access_token = request.refresh_access_token()
+    access_token = request.get_access_token()
     print(access_token)
 
 

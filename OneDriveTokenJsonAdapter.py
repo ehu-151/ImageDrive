@@ -1,4 +1,5 @@
 from BasePixivDriveJsonAdapter import BasePixivDriveJsonAdapter
+import json
 
 
 class OneDriveTokenJsonAdapter(BasePixivDriveJsonAdapter):
@@ -23,6 +24,31 @@ class OneDriveTokenJsonAdapter(BasePixivDriveJsonAdapter):
         self.refresh_token = json_data["refresh_token"]
         self.access_token = json_data["access_token"]
         self.time_stamp = json_data["time_stamp"]
+
+    def save_value(self, access_token=None, timestamp=None):
+        """
+        KeyとValueを指定してJsonを保存します。
+
+        :param access_token:
+        :param timestamp:
+        :return: なし
+        """
+        if access_token is not None:
+            self.access_token = access_token
+        if timestamp is not None:
+            self.time_stamp = timestamp
+
+        ys = {
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "refresh_token": self.refresh_token,
+            "access_token": self.access_token,
+            "time_stamp": self.time_stamp
+        }
+        fw = open(self.__path, 'w')
+        # ココ重要！！
+        # json.dump関数でファイルに書き込む
+        json.dump(ys, fw, indent=2)
 
 
 def main():
