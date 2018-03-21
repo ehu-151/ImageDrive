@@ -40,6 +40,7 @@ class RequestAccessToken:
     def __refresh_access_token(self):
         """
         リフレッシュトークンからアクセストークンを生成して返します。
+
         :return: access_token
         """
         config = OneDriveTokenJsonAdapter()
