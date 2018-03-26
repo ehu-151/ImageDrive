@@ -32,7 +32,7 @@ class RequestAccessToken:
         # アクセストークンを更新すべきかのチェック
         if now_time - least_log_time >= datetime.timedelta(seconds=60 * 50):
             # アクセストークンが50分以上経過した時と更新ログが設定されてない場合は、更新する
-            self.__refresh_access_token()
+            return self.__refresh_access_token()
         else:
             # 更新無しで'onedrive_token.json'から取得
             return adapter.access_token
@@ -52,7 +52,7 @@ class RequestAccessToken:
         header = {"Content-Type": "application/x-www-form-urlencoded"}
         res = requests.post(url=endpoint, data=payload, headers=header)
         if res.status_code == 200:
-            # 'onedrive_token.json'に'更新時刻とアクセストークンを書き込む
+            # 'onedrive_token.json'に'更新時刻とアクセストークンを書き込むで新しいトークを返す
             form = "%Y-%m-%d %H:%M"
             now_time = datetime.datetime.now().strftime(form)
             json_data = res.json()

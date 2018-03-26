@@ -5,6 +5,7 @@ class BasePixivDriveJsonAdapter:
     """
     Jsonパーサの基礎クラスです。load_jsonを保持します。
     """
+
     def __init__(self):
         self.json_data = None
 
