@@ -19,10 +19,12 @@ class PixivImagePicker(AppPixivAPI):
         :param times: 指定タグの画像の取得数
         :return: なし
         """
-        self.__login()
         json_result = self.search_illust(word=tags, req_auth=True)
         # 枚数分だけダウンロード
-        return json_result.illusts[:times]
+        urls = []
+        for illust in json_result.illusts[:times]:
+            urls.append(illust["image_urls"]["large"])
+        return urls
 
     def download_binary(self, url, referer='https://app-api.pixiv.net/'):
         # Write stream to file
@@ -43,7 +45,11 @@ def main():
     picker.login(username, password)
     print(pixiv_setting.tags)
     # タグで画像を取得
-    # picker.get_image_url_by_tags(pixiv_sttting.tags[0], 1)
+    urls = picker.get_image_url_by_tags(pixiv_setting.tags[0], 1)
+    print(urls)
+    for url in urls:
+        image=picker.download_binary(url)
+        print(image)
 
 
 if __name__ == '__main__':
