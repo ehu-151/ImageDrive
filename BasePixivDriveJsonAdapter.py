@@ -8,8 +8,10 @@ class BasePixivDriveJsonAdapter:
 
     def __init__(self):
         self.json_data = None
+        self.path = None
+        self.encoding = "utf-8_sig"
 
-    def load_json(self, path, encoding):
+    def load_json(self):
         """
         Jsonファイルを読み込みます。
         :param path: Jsonファイルのパス
@@ -17,7 +19,7 @@ class BasePixivDriveJsonAdapter:
         :return: なし
         """
         # ファイルを開く
-        f = open(path, 'r', encoding=encoding)
+        f = open(self.path, 'r', encoding=self.encoding)
         self.json_data = json.load(f)
 
     def __load_value(self, json_data):
