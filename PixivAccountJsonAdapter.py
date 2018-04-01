@@ -10,7 +10,7 @@ class PixivAccountJsonAdapter(BasePixivDriveJsonAdapter):
         super().__init__()
         self.pixiv_id = None
         self.password = None
-        self.path = r"..\client.json"
+        self.path = r"..\pixiv_account.json"
         self.__load_json()
 
     def __load_json(self):
