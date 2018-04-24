@@ -10,11 +10,11 @@ class OneDriveTokenJsonAdapter(BasePixivDriveJsonAdapter):
         self.refresh_token = None
         self.access_token = None
         self.time_stamp = None
-        self.__path = r"..\onedrive_token.json"
+        self.path = r"..\onedrive_token.json"
         self.__load_json()
 
     def __load_json(self):
-        super(OneDriveTokenJsonAdapter, self).load_json(self.__path, "utf-8_sig")
+        super(OneDriveTokenJsonAdapter, self).load_json()
         self.__load_value(self.json_data)
 
     def __load_value(self, json_data):
@@ -45,7 +45,7 @@ class OneDriveTokenJsonAdapter(BasePixivDriveJsonAdapter):
             "access_token": self.access_token,
             "time_stamp": self.time_stamp
         }
-        fw = open(self.__path, 'w')
+        fw = open(self.path, 'w')
         # ココ重要！！
         # json.dump関数でファイルに書き込む
         json.dump(ys, fw, indent=2)
