@@ -3,6 +3,7 @@ from RequestAccessToken import RequestAccessToken
 from PixivImagePicker import PixivImagePicker
 from PixivAccountJsonAdapter import PixivAccountJsonAdapter
 
+
 class OneDriveAPI:
     def __init__(self):
         token = RequestAccessToken()
@@ -17,9 +18,8 @@ class OneDriveAPI:
         url = self.endpoint + "/me/drive/root:/" + to_folder + "/" + file_name + ":/content"
         self.headers.update({"Content-Type": file_type})
         response = requests.put(url=url, headers=self.headers, data=row_file)
-        if response.status_code == 200:
+        if 200 <= response.status_code < 300:
             print("アップロード成功")
-            print(response.json())
         else:
             print("アップロード失敗：ステータスコード")
             print(response.status_code)
@@ -28,7 +28,7 @@ class OneDriveAPI:
 
 def main():
     account = PixivAccountJsonAdapter()
-    account.load_json(r"..\..\.PyCharmCE2017.2\config\scratches\client.json", "utf-8_sig")
+    account.load_json()
     username = account.pixiv_id
     password = account.password
 
@@ -36,10 +36,10 @@ def main():
     picker = PixivImagePicker()
     picker.login(username, password)
     drive = OneDriveAPI()
-    times=1
-    image_urls=picker.get_image_url_by_tags("女の子",times)
+    times = 1
+    image_urls = picker.get_image_url_by_tags("女の子", times)
     for image_url in image_urls:
-        image=picker.download_binary(image_url)
+        image = picker.download_binary(image_url)
         drive.simple_upload_file("WindowsLockPicture", "hoge.jpg", image, "image/jpeg")
 
 
