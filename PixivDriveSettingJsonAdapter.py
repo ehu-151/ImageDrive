@@ -12,11 +12,11 @@ class PixivDriveSettingJsonAdapter(BasePixivDriveJsonAdapter):
         self.tags = None
         self.num_of_image = None
         self.interval = None
-        self.__path = 'PixivDriveSetting.json'
+        self.path = '..\PixivDriveSetting.json'
         self.__load_json()
 
     def __load_json(self):
-        super(PixivDriveSettingJsonAdapter, self).load_json(self.__path, 'utf-8_sig')
+        super(PixivDriveSettingJsonAdapter, self).load_json()
         self.__load_value(self.json_data)
 
     def __load_value(self, json_data):

@@ -10,11 +10,11 @@ class PixivAccountJsonAdapter(BasePixivDriveJsonAdapter):
         super().__init__()
         self.pixiv_id = None
         self.password = None
-        self.__path = r"..\..\.PyCharmCE2017.2\config\scratches\client.json"
+        self.path = r"..\pixiv_account.json"
         self.__load_json()
 
     def __load_json(self):
-        super(PixivAccountJsonAdapter, self).load_json(self.__path, "utf-8_sig")
+        super(PixivAccountJsonAdapter, self).load_json()
         self.__load_value(self.json_data)
 
     def __load_value(self, json_data):

@@ -34,7 +34,7 @@ class PixivImagePicker(AppPixivAPI):
 
 def main():
     account = PixivAccountJsonAdapter()
-    account.load_json(r"..\..\.PyCharmCE2017.2\config\scratches\client.json", "utf-8_sig")
+    account.load_json()
     username = account.pixiv_id
     password = account.password
 
