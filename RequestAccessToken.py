@@ -1,32 +1,36 @@
 import datetime
 import requests
-
-from OneDriveTokenJsonAdapter import OneDriveTokenJsonAdapter
+import json
 
 
 class RequestAccessToken:
-    def __init__(self):
-        self.__access_token = None
-        self.__refresh_token = None
+    def __init__(self, onedrive_config):
+        self.__client_id = onedrive_config["client_id"]
+        self.__client_secret = onedrive_config["client_secret"]
+        self.__refresh_token = onedrive_config["refresh_token"]
+        self.__access_token = onedrive_config["access_token"]
+        self.__time_stamp = onedrive_config["time_stamp"]
+        self.__onedrive_config = onedrive_config
         self.__redirect_url = "https://localhost:3000/returned"
         self.__scope = "Files.ReadWrite.All offline_access"
 
-    def get_access_token(self):
+    def get_onedrive_json(self):
         """
-        アクセストークンを取得します。
+        config.json用のonedrive_configを更新します。
+        具体的な内容は、refresh_tokenで取得したaccess_tokenとその時の時刻をJsonにしたonedrive_configを返します。
 
-        :return: access_token
+        :return: onedrive_config
         """
 
         # Jsonデータから直近の更新時間をチェック、何も記入されていない場合はエラー
-        adapter = OneDriveTokenJsonAdapter()
         form = "%Y-%m-%d %H:%M"
-        if adapter.time_stamp != "":
-            least_log_time = datetime.datetime.strptime(adapter.time_stamp, form)
+        if self.__time_stamp != "":
+            least_log_time = datetime.datetime.strptime(self.__time_stamp, form)
         else:
+            # 更新日が記入されていなかったら例外を出す。
             raise ValueError(
-                "timestamp is none value. you must replace Value to '2000-01-01 01:00'  in 'onedrive_token.json'")
-        # 現在の時刻
+                "timestamp is none value. you must replace Value to '2000-01-01 01:00'  in 'config.json'")
+        # 現在の時刻を取得
         now_time = datetime.datetime.now()
 
         # アクセストークンを更新すべきかのチェック
@@ -35,7 +39,7 @@ class RequestAccessToken:
             return self.__refresh_access_token()
         else:
             # 更新無しで'onedrive_token.json'から取得
-            return adapter.access_token
+            return self.__onedrive_config
 
     def __refresh_access_token(self):
         """
@@ -43,28 +47,32 @@ class RequestAccessToken:
 
         :return: access_token
         """
-        config = OneDriveTokenJsonAdapter()
         # URLエンドポイント
         endpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
         # bodyのパラメータ
-        payload = {"grant_type": "refresh_token", "refresh_token": config.refresh_token, "client_id": config.client_id,
-                   "client_secret": config.client_secret, "scope": self.__scope, "redirect_uri": self.__redirect_url}
+        payload = {"grant_type": "refresh_token", "refresh_token": self.__refresh_token, "client_id": self.__client_id,
+                   "client_secret": self.__client_secret, "scope": self.__scope, "redirect_uri": self.__redirect_url}
         header = {"Content-Type": "application/x-www-form-urlencoded"}
         res = requests.post(url=endpoint, data=payload, headers=header)
         if res.status_code == 200:
             # 'onedrive_token.json'に'更新時刻とアクセストークンを書き込むで新しいトークを返す
             form = "%Y-%m-%d %H:%M"
             now_time = datetime.datetime.now().strftime(form)
-            json_data = res.json()
-            access_token = json_data["access_token"]
-            config.save_value(access_token=access_token, timestamp=str(now_time))
-            return json_data["access_token"]
+            res_data = res.json()
+
+            self.__onedrive_config["access_token"] = res_data["access_token"]
+            self.__onedrive_config["time_stamp"] = str(now_time)
+            return self.__onedrive_config
 
 
 def main():
-    request = RequestAccessToken()
-    access_token = request.get_access_token()
-    print(access_token)
+    # 設定ファイル読み込み
+    with open(r"C:\Users\kaikoro\PycharmProjects\config.json", "r", encoding='utf-8_sig') as file:
+        json_data = json.load(file)
+    onedrive_config = json_data["onedrive_config"]
+    request_token = RequestAccessToken(onedrive_config)
+    onedrive_config = request_token.get_onedrive_json()
+    print(onedrive_config)
 
 
 if __name__ == '__main__':
