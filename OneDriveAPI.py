@@ -1,14 +1,10 @@
 import requests
-from RequestAccessToken import RequestAccessToken
-from PixivImagePicker import PixivImagePicker
-from PixivAccountJsonAdapter import PixivAccountJsonAdapter
 
 
 class OneDriveAPI:
-    def __init__(self):
-        token = RequestAccessToken()
+    def __init__(self, token):
         self.endpoint = "https://graph.microsoft.com/v1.0"
-        self.headers = {"Authorization": token.get_access_token()}
+        self.headers = {"Authorization": token}
 
     def simple_upload_file(self, to_folder, file_name, row_file, file_type="text/plain"):
         """
@@ -27,20 +23,7 @@ class OneDriveAPI:
 
 
 def main():
-    account = PixivAccountJsonAdapter()
-    account.load_json()
-    username = account.pixiv_id
-    password = account.password
-
-    # インスタンス生成
-    picker = PixivImagePicker()
-    picker.login(username, password)
-    drive = OneDriveAPI()
-    times = 1
-    image_urls = picker.get_image_url_by_tags("女の子", times)
-    for image_url in image_urls:
-        image = picker.download_binary(image_url)
-        drive.simple_upload_file("WindowsLockPicture", "hoge.jpg", image, "image/jpeg")
+    pass
 
 
 if __name__ == '__main__':
