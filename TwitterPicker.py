@@ -39,7 +39,7 @@ class TwitterPicker:
 
             except KeyError:
                 # mediaがないとき
-                print("no media")
+                pass
 
     def get_image_binary(self, image_url):
         """
